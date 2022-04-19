@@ -47,27 +47,27 @@ function preload(){
 }
 
 function setup(){
-  createCanvas(600,300)
+  createCanvas(windowWidth,windowHeight)
 
   //criar um sprite do trex
   trex = createSprite(50,250,15,40);
   trex.addAnimation("running",trexrun);
-  trex.scale = 0.7; 
+  trex.scale = 0.5; 
   trex.addAnimation("urdead", trexdead)
 
-  floor1 = createSprite(300,285,600,15);
+  floor1 = createSprite(width/2+50 ,285,width/2,15);
   floor1.addImage (imgfloor1)  
-  floor2 = createSprite(300,297,600,10);
+  floor2 = createSprite(width/2,297,width/2,10);
   floor2.visible = false 
   cloudGroup = new Group();
   obstacleGroup = new Group();
   trex.setCollider("circle",0,0,30)
   //trex.debug = true
-  restart = createSprite(260,127);
+  restart = createSprite(width/2,127);
   restart.addImage (restartImg);
   restart.visible = false
   restart.scale = 0.5
-  gameOver = createSprite(260,100);
+  gameOver = createSprite(width/2,height/2+30);
   gameOver.addImage (gameOverImg);
   gameOver.visible = false
   gameOver.scale = 0.5
@@ -76,7 +76,7 @@ function setup(){
 function draw(){
   console.log(trex.y);
   background("white");
-  //text(mouseX + "," + mouseY, mouseX, mouseY);
+  text(mouseX + "," + mouseY, mouseX, mouseY);
   trex.collide(floor2 );
   text ("pontuação:  "+ pontuacao,4,25 ); //concatenaçao de valores 
   drawSprites();
@@ -86,10 +86,13 @@ function draw(){
   criarNuvens();
   criarObstaculos();
   
-    if (keyDown("space")&& trex.y >= 258 ){  
+    if (touches.lenght  > 0 || keyDown("space")&& trex.y >= 258  ){  
   trex.velocityY = -13
+  touches=[]
   jumpsound.play();
   }  
+    trex.velocityY = trex.velocityY + 1
+      
     if(pontuacao>0 && pontuacao%300 == 0){ checkpoint.play();
         
     }   
@@ -97,10 +100,9 @@ function draw(){
       jumpsound.stop()
       
     }
-    trex.velocityY = trex.velocityY + 1
       
     if (floor1.x < 0){
-  floor1.x = floor1.width/2 ; 
+  floor1.x = floor1.width/4 ; 
   }
   floor1.velocityX = -(6+1*pontuacao/100) ; 
   trex.collide(floor1)
@@ -119,7 +121,7 @@ function draw(){
   obstacleGroup.setVelocityXEach(0);
   cloudGroup.setVelocityXEach(0);
   trex.velocityY = 0;
-  cloudGroup.setLifetimeEach(-1);
+  cloudGroup.setLifetimeEach(0);
   obstacleGroup.setLifetimeEach(-1);
   trex.changeAnimation("urdead", trexdead)
   gameOver.visible = true
@@ -134,11 +136,11 @@ function draw(){
 
 function criarNuvens(){
   if (frameCount %98 == 0){
-  var nuvens = createSprite(600,20,1,1);
+  var nuvens = createSprite(width+100,20,1,1);
   nuvens.velocityX = -5;
   nuvens.addImage (cloud);
   nuvens.scale = 0.6;
-  nuvens.lifetime = 130
+  nuvens.lifetime = 750
   
   cloudGroup.add(nuvens);
   nuvens.y = Math.round(random(30, 123 ));
@@ -150,7 +152,7 @@ function criarNuvens(){
 
 function criarObstaculos(){
   if (frameCount %80 == 0){
-  var obstaculos = createSprite(570,268,30,30);
+  var obstaculos = createSprite(width+100,268,30,30);
   obstaculos.velocityX = -(6+1*pontuacao/100) ;  
   var rand = Math.round(random(1,6 ));
   switch (rand) {
@@ -171,7 +173,7 @@ function criarObstaculos(){
 }
 
   obstaculos.scale = 0.5;
-  obstaculos.lifetime = 130;
+  obstaculos.lifetime = 750;
   obstacleGroup.add(obstaculos);
 
 }
